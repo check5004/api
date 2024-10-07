@@ -1,3 +1,6 @@
 rem @echo off
-docker-compose up --build
-pause
+
+rem バックグラウンドで実行
+docker-compose up --build -d
+
+rem pause

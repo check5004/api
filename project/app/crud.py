@@ -1,14 +1,18 @@
 from sqlalchemy.orm import Session
+from sqlalchemy import or_
 from . import models, schemas
 
 def get_customers(db: Session, skip: int = 0, limit: int = 10, name: str = "", phone_number: str = "", birth_date: str = ""):
-    return db.query(models.Customer) \
-        .filter(models.Customer.name.like(f"%{name}%")) \
-        .filter(models.Customer.phone_number.like(f"%{phone_number}%")) \
-        .filter(models.Customer.birth_date.like(f"%{birth_date}%")) \
-        .offset(skip) \
-        .limit(limit) \
-        .all()
+    query = db.query(models.Customer)
+
+    if name:
+        query = query.filter(models.Customer.name.like(f"%{name}%"))
+    if phone_number:
+        query = query.filter(models.Customer.phone_number.like(f"%{phone_number}%"))
+    if birth_date:
+        query = query.filter(models.Customer.birth_date == birth_date)
+
+    return query.offset(skip).limit(limit).all()
 
 def get_customer(db: Session, customer_id: int):
     return db.query(models.Customer) \
